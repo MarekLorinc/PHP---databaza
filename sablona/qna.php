@@ -1,9 +1,9 @@
 <?php
-$jsonData = file_get_contents("otazky.json");
-$data = json_decode($jsonData, true);
+require_once "classes/QnA.php";
+require_once "db/config.php";
 
-$otazky = $data["otazky"];
-$odpovede = $data["odpovede"];
+$qna = new QnA();
+$zoznam = $qna->nacitajOtazky();
 ?>
 
 <!DOCTYPE html>
@@ -49,10 +49,10 @@ $odpovede = $data["odpovede"];
         </div>
     </section>
     <section class="container">
-        <?php for ($i = 0; $i < count($otazky); $i++) { ?>
+        <?php foreach ($zoznam as $polozka) { ?>
             <div class="accordion">
-                <div class="question"><?php echo $otazky[$i]; ?></div>
-                <div class="answer"><?php echo $odpovede[$i]; ?></div>
+                <div class="question"><?php echo htmlspecialchars($polozka['question']); ?></div>
+                <div class="answer"><?php echo htmlspecialchars($polozka['answer']); ?></div>
             </div>
         <?php } ?>
     </section>
