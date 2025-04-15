@@ -1,23 +1,24 @@
 <?php
 require_once(__DIR__ . '/../db/config.php');
+require_once(__DIR__ . '/Database.php');
 
-class QnA {
-    private $pdo;
+class QnA extends Database {
 
     //Konstruktor triedy
     //Pripoji sa na databazu aby sa z nej mohlo pisat aleno do nej zapisovat
     public function __construct() {
-        $db = DATABASE;
-
-        $dsn = "mysql:host={$db['HOST']};port={$db['PORT']};dbname={$db['DBNAME']};charset=utf8";
-        $this->pdo = new PDO($dsn, $db['USER_NAME'], $db['PASSWORD']);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        parent::__construct(); // zavolá konštruktor z Database
     }
+
 
     //Metoda nacitajOtazky: nacita vsetky otazky a odpovede z tabulky `qna` z databazy 'sablona'
     public function nacitajOtazky() {
-        $stmt = $this->pdo->query("SELECT question, answer FROM qna");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->getConnection()->query("SELECT question, answer FROM qna");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Chyba pri načítavaní otázok: " . $e->getMessage());
+        }
     }
 
     //Metoda na vkladanie
